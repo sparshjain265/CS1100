@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int main()
+{
+	int i = 1, n;
+	printf("Enter the number of which you want the multiplication table (till 16) of: ");
+	scanf("%d", &n);
+	printf("\nMultiplication table of %d\n", n);
+	printf("\n===========================\n");
+	
+	while(i<=16)
+		{
+			printf("\n\t%d x %2d =  %2d", n, i, n*i);
+			i = i + 1;
+		}
+	
+	printf("\n===========================\n");	
+	return 0;
+}

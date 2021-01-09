@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    FILE *f;
+    char find[100], read[100], *found;
+    int i = 0;
+
+    printf("Enter the file name: ");
+    scanf(" %s", read);
+    f = fopen(read, "r");
+    if(f == 0)
+    {
+        printf("Couldn't open file! Try again!");
+        return 1;
+    }
+
+    printf("Enter the string you want to find: ");
+    scanf(" %99[^\n]s", find);
+
+    while(f != EOF)
+    {
+        fseek(f, i, SEEK_SET);
+        fscanf(f, " %99[^\n]s", read);
+        found = strstr(read, find);
+        if(found)
+        {
+            printf("%s found in the given file!\n", find);
+            break;
+        }
+        i++;
+
+    }
+
+    fclose(f);
+    return 0;
+}

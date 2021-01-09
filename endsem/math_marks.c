@@ -1,0 +1,133 @@
+/*
+Program Name				: math_marks.c
+Programmer's Name			: Sparsh Jain
+Programmer's Roll No.	: 111601026
+Program Description		: to read part of a name, and print the details of all the matching students from file rollodd.txt along with their maths marks from the file math.txt
+Date							: 08/11/2016
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main()
+{
+	//file pointer details, and maths to open the file rollodd.txt, and math.txt
+	FILE *details, *maths;
+	//string name to read the name from the file rollodd.txt, string part to read the input from the user
+	//character pointer found to use as flag if a matching name is found, char ch to store extra characters
+	char name[35], part[35], *found, ch;
+	//intger endD, and endM to check the end of file in details, and math.txt, i for counter, marks to read the math marks
+	int endD = 1, endM = 1, i, marks;
+	//long integers to read the roll no from rollodd.txt, and math.txt
+	long int roll, mroll;
+	//float avg to compute the class average
+	float avg = 0.0;
+	
+	//opening the file rollodd.txt, and printing error message if cannot be opened
+	details = fopen("rollodd.txt", "r");
+	if(details == 0)
+	{
+		printf("Cannot reach the student details! Try again later.\n");
+		return 0;
+	}
+	
+	//opening the file math.txt, and printing error message if cannot be opened
+	maths = fopen("math.txt", "r");
+	if(maths == 0)
+	{
+		printf("Cannot reach the maths marks! Try again later.\n");
+		fclose(details);
+		return 0;
+	}
+	
+	//taking part of the name as input from the user while making sure it does not go beyond the limit
+	printf("Enter the name (or part of the name): ");
+	for(i = 0; i < 34; i++)
+	{
+		scanf("%c", &part[i]);
+		if(part[i] == '\n')
+			break;
+	}
+	part[i] = '\0';	//placing the null character at the end
+	if(i == 34)
+		while(getchar() != '\n');	//reading till newline character to empty buffer
+	
+	//converting all the letters to upper case, since rollodd.txt contains names in upper case
+	while(i > 0)
+	{
+		part[i-1] = toupper(part[i-1]);
+		i--;
+	}
+	//here, i becomes 0
+	
+	//loop to go through the file rollodd.txt, i remembers the number of matching names
+	while(endD > 0)
+	{
+		//reading roll no, and name
+		endD = fscanf(details, "%ld %34[^\n]", &roll, name); 
+		//if fscanf cannot read the 2, go out of the loop
+		if(endD < 2)
+			break;
+		
+		//found will be 0 if part is not a part of name
+		found = strstr(name, part);
+		
+		//checking math.txt if part matches with the name
+		if(found != 0)
+		{
+			//bringing the file pointer maths to the beginning
+			endM = 1;
+			fseek(maths, 0, SEEK_SET);
+			//loop to go through the file math.txt
+			while(endM > 0)
+			{
+				//reading roll no., the space, and marks from math.txt
+				endM = fscanf(maths, "%ld %c %d", &mroll, &ch, &marks);
+				//if fscanf cannot read the 3, go out of the loop
+				if(endM < 3)
+					break;
+				
+				//if the 2 roll nos match, print the roll no., name, and marks of the student
+				if(mroll == roll)
+				{
+					printf("%ld %s, %d\n",roll, name, marks);
+					i++;	//incrementing the number of matches
+				}
+			}			
+		}
+	}
+	
+	//if no match is found, printing Not Found
+	if(i == 0)
+		printf("Not Found\n");
+	//else, compute and print the class average
+	else
+	{
+		//we will use i to store the total number of students
+		i = 0;
+		//bringing the file pointer maths to the beginning
+		endM = 1;
+		fseek(maths, 0, SEEK_SET);
+		//loop to go through the file math.txt
+		while(endM > 0)
+		{
+			//reading roll no., the space, and marks from math.txt
+			endM = fscanf(maths, "%ld %c %d", &mroll, &ch, &marks);
+			//if fscanf cannot read the 3, go out of the loop
+			if(endM < 3)
+				break;
+			
+			//here, in the loop, avg stores the sum of all the scores
+			avg = avg + marks;
+			i++; //incrementing the number of students
+		}
+		avg = avg/i; //dividing the sum (stored in avg) by number of students (stored in i) to get average in avg
+		printf("Class Average: %g\n", avg);	//printing the class average
+	}
+	
+	//closing the files, and return
+	fclose(details);
+	fclose(maths);
+	return 0;
+}

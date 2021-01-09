@@ -1,0 +1,148 @@
+/*
+Program name: q1.c
+Programmer's Name: Sparsh Jain
+Description: calculate grades
+Date: 11/11/2016
+*/
+
+#include <stdio.h>
+
+typedef struct
+{
+	char name[30];
+	int marks[4];
+	char grades[4];
+}student;
+
+int get_input(FILE *, student *);
+float calculate_subj_average(student *, int, int);
+void calculate_subj_grade(student *, int, int, float);
+void generate_output(FILE *, student *, int);
+
+int main()
+{
+	student l[200];
+	float averages[4];
+	FILE *input, *output;
+	int n, i;
+	char fname[30];
+	
+	printf("Enter input filename: ");
+	scanf("%s", fname);
+	input = fopen(fname, "r");
+	if(input == 0)
+	{
+		printf("Couldn't open file!\n");
+		return -1;
+	}
+	
+	printf("Enter output filename: ");
+	scanf("%s", fname);
+	output = fopen(fname, "w");
+	if(output == 0)
+	{
+		printf("Unexpected error!\n");
+		fclose(input);
+		return -1;
+	}
+	
+	n = get_input(input, l);
+	
+	for(i = 0; i < 4; i++)
+		averages[i] = calculate_subj_average(l, n, i);
+		
+	for(i = 0; i < 4; i++)
+		calculate_subj_grade(l, n, i, averages[i]);
+		
+	generate_output(output, l, n);
+		
+	fclose(input);
+	fclose(output);
+	return 0;
+}
+
+int get_input(FILE *file, student *list)
+{
+	int i, end = 8;
+	char ch;
+	
+	for(i = 0; i < 200; i++)
+	{
+		end = fscanf(file, " %[^,]%c%d%c%d%c%d%c%d", list[i].name, &ch, &list[i].marks[0], &ch, &list[i].marks[1], &ch, &list[i].marks[2], &ch, &list[i].marks[3]);
+		if(end < 9)
+			break;
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		printf("%s%c%d%c%d%c%d%c%d\n", list[i].name, ch, list[i].marks[0], ch, list[i].marks[1], ch, list[i].marks[2], ch, list[i].marks[3]);
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+	
+	end = fscanf(file, " %c", &ch);
+	if(end == 1)
+		return -1;
+	
+	return i;
+}
+
+float calculate_subj_average(student *list, int n, int index)
+{
+	float avg = 0.0;
+	int i;
+	
+	for(i = 0; i < n; i++)
+		avg += list[i].marks[index];
+		
+	avg /= n;
+	
+	return avg;
+}
+
+void calculate_subj_grade(student *list, int n, int index, float avg)
+{
+	int i;
+	
+	for(i = 0; i < n; i++)
+	{
+		if(list[i].marks[index] >= 2*avg)
+			list[i].grades[index] = 'A';
+		else if(list[i].marks[index] >= avg)
+			list[i].grades[index] = 'B';
+		else if(list[i].marks[index] >= avg/2)
+			list[i].grades[index] = 'C';
+		else
+			list[i].grades[index] = 'F';
+	}
+}
+
+void generate_output(FILE *file, student *list, int n)
+{
+	int i;
+	
+	for(i = 0; i < n; i++)
+		fprintf(file, "%s, %c, %c, %c, %c\n", list[i].name, list[i].grades[0], list[i].grades[1], list[i].grades[2], list[i].grades[3]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

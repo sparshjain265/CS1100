@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int main()
+{
+  FILE *p;            /* p is a file pointer */
+  char d;
+  float c;
+  int success;
+  
+  p = fopen("file", "r");	
+  /* Open the file test.c in read-only mode and assign its handle to p */
+  if (p == 0)	/* Check if the file was opened correctly */
+  {
+   printf("Error in opening the file\n");
+  return(1);
+  }
+
+  do
+  {
+    success = fscanf(p, "%f %c", &c, &d);    /* Read next character from file */
+    printf("%d %f %c\n",success, c, d);      /* Print the character to screen */
+  }
+  while(success > 0);                /* Repeat till fscanf reads something successfully */
+
+  fclose(p);                          /* Close the file */
+  return(0);
+}

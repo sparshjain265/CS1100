@@ -1,0 +1,96 @@
+/*
+Program Name: favourite_subject.c
+Programmer: Sparsh Jain
+Description: Read name and marks from file data02.txt and print the favourite subject based on the highest marks
+Date: 27-09-2016
+*/
+
+
+#include<stdio.h>
+
+int main()
+	{
+		FILE *marks;
+		int i, p, c, m, b, j, p1 = 0, c1 = 0, m1 = 0, b1 = 0, success;
+		char P[150][15], C[150][15], M[150][15], B[150][15], name[15], comma;		
+		
+		marks = fopen("data02.txt", "r");
+		
+		if(marks == 0)
+			{
+				printf("Error in opening file.\n");
+				return 1;
+			}
+		
+		for(i = 0; i < 150; i++)
+			{
+				
+				success = fscanf(marks, "%s%d%c%d%c%d%c%d", name, &p, &comma, &c, &comma, &m, &comma, &b);
+				if(success != 8)
+					break;
+				printf("%s %d %d %d %d\n", name, p, c, m, b);
+				
+				if(p>=c && p>=m && p>=b)
+					{
+						
+						for(j = 0; name[j] != ','; j++)
+							P[p1][j] = name[j];
+						P[p1][j] = '\0';
+						
+						p1++;
+					}
+				else if(c>=p && c>=m && c>=b)
+					{
+						
+						for(j = 0; name[j] != ','; j++)
+							C[c1][j] = name[j];
+						C[c1][j] = '\0';
+						
+						
+						c1++;
+					}
+				else if(m>=p && m>=c && m>=b)
+					{
+						
+						for(j = 0; name[j] != ','; j++)
+							M[m1][j] = name[j];
+						M[m1][j] = '\0';
+						
+						strcpy(M[m1], name);
+						m1++;
+					}
+				else
+					{
+						
+						for(j = 0; name[j] != ','; j++)
+							B[b1][j] = name[j];
+						B[b1][j] = '\0';
+						
+						b1++;
+					}
+			}
+		fclose(marks);
+		
+		printf("Physics:\n");
+		for(i = 0; i < p1; i++)
+			printf("%s, ", P[i]);
+		printf("\b\b.\n");
+		
+		printf("Chemistry:\n");
+		for(i = 0; i < c1; i++)
+			printf("%s, ", C[i]);
+		printf("\b\b.\n");
+		
+		printf("Maths:\n");
+		for(i = 0; i < m1; i++)
+			printf("%s, ", M[i]);
+		printf("\b\b.\n");
+		
+		printf("Biology:\n");
+		for(i = 0; i < b1; i++)
+			printf("%s, ", B[i]);
+		printf("\b\b.\n");
+		
+		
+		return 0;
+	}

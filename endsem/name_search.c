@@ -1,0 +1,80 @@
+/*
+Program Name				: name_search.c
+Programmer's Name			: Sparsh Jain
+Programmer's Roll No.	: 111601026
+Program Description		: to read part of a name, and print the details of all the matching students from file rollodd.txt
+Date							: 08/11/2016
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main()
+{
+	//file pointer details to open the file rollodd.txt
+	FILE *details;
+	//string name to read the name from the file, string part to read the input from the user
+	//character pointer found to use as flag if a matching name is found
+	char name[35], part[35], *found;
+	//intger end to check the end of file, i for counter
+	int end = 1, i;
+	//long integer roll to read the roll no. from the file
+	long int roll;
+	
+	//opening the file, and printing error message if cannot be opened
+	details = fopen("rollodd.txt", "r");
+	if(details == 0)
+	{
+		printf("Cannot reach the student details! Try again later.\n");
+		return 0;
+	}
+	
+	//taking part of the name as input from the user while making sure it does not go beyond the limit
+	printf("Enter the name (or part of the name): ");
+	for(i = 0; i < 34; i++)
+	{
+		scanf("%c", &part[i]);
+		if(part[i] == '\n')
+			break;
+	}
+	part[i] = '\0';	//placing the null character at the end
+	if(i == 34)
+		while(getchar() != '\n');	//reading till newline character to empty buffer
+	
+	//converting all the letters to upper case, since rollodd.txt contains names in upper case
+	while(i > 0)
+	{
+		part[i-1] = toupper(part[i-1]);
+		i--;
+	}
+	//here, i becomes 0
+	
+	//loop to go through the file, i remembers the number of matching names
+	while(end > 0)
+	{
+		//reading roll no, and name
+		end = fscanf(details, "%ld %34[^\n]", &roll, name);
+		//if fscanf cannot read 2 strings, go out of the loop
+		if(end < 2)
+			break;
+		
+		//found will be 0 if part is not a part of name
+		found = strstr(name, part);
+		
+		//printing the name and roll no. if part matches with the name
+		if(found != 0)
+		{
+			printf("%ld %s\n",roll, name);
+			i++;	//incrementing the number of matches
+		}
+	}
+	
+	//if no match is found, printing Not Found
+	if(i == 0)
+		printf("Not Found\n");
+	
+	//closing the file, and return
+	fclose(details);
+	return 0;
+}
